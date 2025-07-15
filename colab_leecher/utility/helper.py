@@ -297,7 +297,7 @@ def multipartArchive(path: str, type: str, remove: bool):
 
 def isTimeOver():
     global BotTimes
-    ten_sec_passed = time() - BotTimes.current_time >= 3
+    ten_sec_passed = time() - BotTimes.current_time >= 8
     if ten_sec_passed:
         BotTimes.current_time = time()
     return ten_sec_passed
