@@ -1,13 +1,9 @@
-# copyright 2023 © Xron Trix | https://github.com/Xrontrix10
+# @title <font color=red> 🖥️ Main Colab Leech Code
 
-
-# @title 🖥️ Main Colab Leech Code
-
-# @title Main Code
 # @markdown <div><center><img src="https://user-images.githubusercontent.com/125879861/255391401-371f3a64-732d-4954-ac0f-4f093a6605e1.png" height=80></center></div>
-# @markdown <center><h4><a href="https://github.com/XronTrix10/Telegram-Leecher/wiki/INSTRUCTIONS">READ</a> How to use</h4></center>
-
-# @markdown <br>
+# @markdown <center><h4><a href="https://github.com/XronTrix10/Telegram-Leecher/wiki/INSTRUCTIONS">READ</a><b> How to use</h4></b></center>
+# @markdown <br><center><h2><font color=lime><strong>Fill all Credentials, Run The Cell and Start The Bot</strong></h2></center>
+# @markdown <br><br>
 
 API_ID = 0  # @param {type: "integer"}
 API_HASH = ""  # @param {type: "string"}
@@ -15,63 +11,50 @@ BOT_TOKEN = ""  # @param {type: "string"}
 USER_ID = 0  # @param {type: "integer"}
 DUMP_ID = 0  # @param {type: "integer"}
 
-
-import subprocess, time, json, shutil, os
+import subprocess, json, shutil, os
 from IPython.display import clear_output
-from threading import Thread
 
-Working = True
+def log(msg, icon="🔧"):
+    print(f"{icon} {msg}")
 
-banner = '''
+log("Initializing setup...")
 
- ____   ____.______  ._______  .______       _____._.______  .___  ____   ____
- \\   \\_/   /: __   \\ : .___  \\ :      \\      \\__ _:|: __   \\ : __| \\   \\_/   /
-  \\___ ___/ |  \\____|| :   |  ||       |       |  :||  \\____|| : |  \\___ ___/ 
-  /   _   \\ |   :  \\ |     :  ||   |   |       |   ||   :  \\ |   |  /   _   \\ 
- /___/ \\___\\|   |___\\ \\_. ___/ |___|   |       |   ||   |___\\|   | /___/ \\___\\
-            |___|       :/         |___|       |___||___|    |___|            
-                        :                                                     
-                                                                              
- 
-              _____     __     __     __              __          
-             / ___/__  / /__ _/ /    / / ___ ___ ____/ /  ___ ____
-            / /__/ _ \\/ / _ `/ _ \\  / /_/ -_) -_) __/ _ \\/ -_) __/
-            \\___/\\___/_/\\_,_/_.__/ /____|__/\\__/\\__/_//_/\\__/_/   
-
-                                                
-
-'''
-
-print(banner)
-
-def Loading():
-    white = 37
-    black = 0
-    while Working:
-        print("\r" + "░"*white + "▒▒"+ "▓"*black + "▒▒" + "░"*white, end="")
-        black = (black + 2) % 75
-        white = (white -1) if white != 0 else 37
-        time.sleep(2)
-    clear_output()
-
-
-_Thread = Thread(target=Loading, name="Prepare", args=())
-_Thread.start()
-
+# Format DUMP_ID if necessary
 if len(str(DUMP_ID)) == 10 and "-100" not in str(DUMP_ID):
-    n_dump = "-100" + str(DUMP_ID)
-    DUMP_ID = int(n_dump)
+    DUMP_ID = int("-100" + str(DUMP_ID))
 
+# Remove default Colab sample data
 if os.path.exists("/content/sample_data"):
+    log("Removing /content/sample_data")
     shutil.rmtree("/content/sample_data")
 
-cmd = "git clone https://github.com/XronTrix10/Telegram-Leecher"
-proc = subprocess.run(cmd, shell=True)
-cmd = "apt update && apt install ffmpeg aria2"
-proc = subprocess.run(cmd, shell=True)
-cmd = "pip3 install -r /content/Telegram-Leecher/requirements.txt"
-proc = subprocess.run(cmd, shell=True)
+# Clone the Telegram-Leecher repository
+log("Cloning Telegram-Leecher repository...")
+subprocess.run(["git", "clone", "https://github.com/XronTrix10/Telegram-Leecher"])
 
+# Install system dependencies
+log("Installing ffmpeg and aria2...")
+subprocess.run("apt update && apt install ffmpeg aria2 -y", shell=True)
+
+# Install Python dependencies with live output
+log("Installing Python dependencies from requirements.txt...", icon="📦")
+req_path = "/content/Telegram-Leecher/requirements.txt"
+process = subprocess.Popen(
+    ["pip3", "install", "-r", req_path],
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT,
+    text=True,
+    bufsize=1,
+)
+
+# Display pip output live
+for line in process.stdout:
+    log(line.strip(), icon="🔹")
+
+process.wait()
+
+# Save credentials to JSON
+log("Saving credentials to credentials.json...")
 credentials = {
     "API_ID": API_ID,
     "API_HASH": API_HASH,
@@ -81,13 +64,16 @@ credentials = {
 }
 
 with open('/content/Telegram-Leecher/credentials.json', 'w') as file:
-    file.write(json.dumps(credentials))
+    json.dump(credentials, file)
 
-Working = False
+# Remove previous bot session if exists
+session_path = "/content/Telegram-Leecher/my_bot.session"
+if os.path.exists(session_path):
+    log("Removing previous bot session...")
+    os.remove(session_path)
 
-if os.path.exists("/content/Telegram-Leecher/my_bot.session"):
-    os.remove("/content/Telegram-Leecher/my_bot.session") # Remove previous bot session
-    
-print("\rStarting Bot....")
+clear_output()
+log("Launching bot...", icon="🚀")
 
-!cd /content/Telegram-Leecher/ && python3 -m colab_leecher #type:ignore
+# Run the bot
+!cd /content/Telegram-Leecher/ && python3 -m colab_leecher  # type: ignore
