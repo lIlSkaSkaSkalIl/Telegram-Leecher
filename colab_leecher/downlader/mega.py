@@ -1,7 +1,6 @@
-import asyncio
-import logging
+import asyncio, re, logging
 from datetime import datetime
-from colab_leecher.utility.helper import status_bar, getTime, sizeUnit
+from colab_leecher.utility.helper import status_bar, getTime, sizeUnit, to_bytes
 from colab_leecher.utility.variables import BotTimes, Messages, Paths
 
 async def megadl(link: str, num: int):
@@ -25,22 +24,7 @@ async def megadl(link: str, num: int):
 
     await process.wait()
 
-import re
-
-def to_bytes(value, unit):
-    unit = unit.lower()
-    if unit.startswith("pi"):
-        return value * 1024**5
-    elif unit.startswith("ti"):
-        return value * 1024**4
-    elif unit.startswith("gi"):
-        return value * 1024**3
-    elif unit.startswith("mi"):
-        return value * 1024**2
-    elif unit.startswith("ki"):
-        return value * 1024
-    else:
-        return value
+import 
 
 async def pro_for_mega(line: str):
     file_name = "N/A"
