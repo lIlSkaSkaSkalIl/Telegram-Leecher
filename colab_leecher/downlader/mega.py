@@ -27,6 +27,21 @@ async def megadl(link: str, num: int):
 
 import re
 
+def to_bytes(value, unit):
+    unit = unit.lower()
+    if unit.startswith("pi"):
+        return value * 1024**5
+    elif unit.startswith("ti"):
+        return value * 1024**4
+    elif unit.startswith("gi"):
+        return value * 1024**3
+    elif unit.startswith("mi"):
+        return value * 1024**2
+    elif unit.startswith("ki"):
+        return value * 1024
+    else:
+        return value
+
 async def pro_for_mega(line: str):
     file_name = "N/A"
     percentage = 0.0
@@ -36,30 +51,33 @@ async def pro_for_mega(line: str):
     eta = "Unknown"
 
     try:
-        # Regex data megadl
         pattern = re.compile(
-            r"^(.*?):\s+([\d.]+)%\s+-\s+([\d.]+)\s+(\w+)\s+\(([\d,]+)\s+bytes\)\s+of\s+([\d.]+)\s+(\w+)\s+\(([\d.]+)\s+(\w+/s)\)$"
+            r"^(.*?):\s+([\d.]+)%\s+-\s+([\d.]+)\s+(\w+)\s+\([\d,]+\s+bytes\)\s+of\s+([\d.]+)\s+(\w+)\s+\(([\d.]+)\s+(\w+/s)\)$"
         )
         match = pattern.match(line)
-
         if match:
             file_name = match.group(1)
             percentage = float(match.group(2))
 
-            downloaded_value, downloaded_unit = float(match.group(3)), match.group(4)
-            downloaded_size = f"{downloaded_value} {downloaded_unit}"
-            downloaded_bytes = int(match.group(5).replace(",", ""))
+            # ukuran terunduh & total (untuk tampilan)
+            downloaded_bytes = to_bytes(float(match.group(3)), match.group(4))
+            total_bytes = to_bytes(float(match.group(5)), match.group(6))
+            downloaded_size = sizeUnit(downloaded_bytes)
+            total_size = sizeUnit(total_bytes)
 
-            total_value, total_unit = float(match.group(6)), match.group(7)
-            total_size = f"{total_value} {total_unit}"
-            total_bytes = convert_to_bytes(total_value, total_unit)
+            # kecepatan
+            speed_value = float(match.group(7))
+            speed_unit = match.group(8).replace("/s", "")
+            speed_bps = to_bytes(speed_value, speed_unit)
+            speed = f"{speed_value} {speed_unit}/s"
 
-            # Hitung speed & ETA pakai speedETA
-            speed, eta_seconds, percentage = speedETA(BotTimes.task_start, downloaded_bytes, total_bytes)
-            eta = getTime(int(eta_seconds)) if eta_seconds > 0 else "Unknown"
+            # hitung ETA
+            if speed_bps > 0:
+                eta_seconds = int((total_bytes - downloaded_bytes) / speed_bps)
+                eta = getTime(eta_seconds)
 
     except Exception as e:
-        logging.error(f"Error parsing line: {e}")
+        logging.error(f"Error parsing megadl line: {e}")
 
     Messages.download_name = file_name
     Messages.status_head = (
@@ -76,18 +94,4 @@ async def pro_for_mega(line: str):
         total_size,
         "MEGA",
     )
-
-
-def convert_to_bytes(value, unit):
-    """Konversi ukuran file ke bytes berdasarkan unit."""
-    unit = unit.lower()
-    if unit.startswith("kb"):
-        return int(value * 1024)
-    elif unit.startswith("mb"):
-        return int(value * 1024**2)
-    elif unit.startswith("gb"):
-        return int(value * 1024**3)
-    elif unit.startswith("tb"):
-        return int(value * 1024**4)
-    return int(value)
 
