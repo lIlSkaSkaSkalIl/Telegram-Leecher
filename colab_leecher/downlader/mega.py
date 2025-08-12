@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from datetime import datetime
-from colab_leecher.utility.helper import status_bar, getTime, speedETA
+from colab_leecher.utility.helper import status_bar, getTime, sizeUnit
 from colab_leecher.utility.variables import BotTimes, Messages, Paths
 
 async def megadl(link: str, num: int):
