@@ -34,7 +34,6 @@ class BOT:
         mode = "leech"
         type = "normal"
         ytdl = False
-        twitter = False
 
 
     class State:
