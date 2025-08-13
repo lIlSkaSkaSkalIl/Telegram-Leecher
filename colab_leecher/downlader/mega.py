@@ -24,8 +24,6 @@ async def megadl(link: str, num: int):
 
     await process.wait()
 
-import 
-
 async def pro_for_mega(line: str):
     file_name = "N/A"
     percentage = 0.0
