@@ -60,13 +60,16 @@ async def pro_for_mega(line: str):
                 eta_seconds = int((total_bytes - downloaded_bytes) / speed_bps)
                 eta = getTime(eta_seconds)
 
+            if file_name and file_name != "N/A":
+                Messages.download_name = file_name
+
     except Exception as e:
         logging.error(f"Error parsing megadl line: {e}")
 
-    Messages.download_name = file_name
+    file_display = Message.download_name or "N/A"
     Messages.status_head = (
         f"<b>📥 DOWNLOADING FROM MEGA » </b>\n\n"
-        f"<b>🏷️ Name » </b><code>{file_name}</code>\n"
+        f"<b>🏷️ Name » </b><code>{file_display}</code>\n"
     )
 
     await status_bar(
