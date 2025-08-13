@@ -64,7 +64,7 @@ async def pro_for_mega(line: str):
     except Exception as e:
         logging.error(f"Error parsing megadl line: {e}")
 
-    file_display = Message.download_name or "N/A"
+    file_display = Messages.download_name or "N/A"
     Messages.status_head = (
         f"<b>📥 DOWNLOADING FROM MEGA » </b>\n\n"
         f"<b>🏷️ Name » </b><code>{file_display}</code>\n"
