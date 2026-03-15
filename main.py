@@ -6,6 +6,7 @@
 # @markdown <br><br>
 
 # @markdown ---
+# @markdown 
 # @markdown ⚠️ **Important Setup**
 # @markdown
 # @markdown This notebook now uses **Colab Secrets** instead of `#@param`.
@@ -21,6 +22,7 @@
 # @markdown 📍 You can open Secrets from the **left sidebar → 🔑 Secrets**
 # @markdown
 # @markdown After adding them, simply **run this cell to start the bot**.
+# @markdown 
 # @markdown ---
 
 from google.colab import userdata
