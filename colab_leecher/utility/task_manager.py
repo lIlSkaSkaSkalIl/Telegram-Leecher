@@ -123,13 +123,13 @@ async def taskScheduler():
 
     src_text.append(Messages.dump_task)
 
+    # selalu reset ke path default setiap task baru
+    Paths.down_path = Paths.BASE_DOWN_PATH
+    
     if ospath.exists(Paths.WORK_PATH):
         shutil.rmtree(Paths.WORK_PATH)
-        # makedirs(Paths.WORK_PATH)
-        makedirs(Paths.down_path)
-    else:
-        makedirs(Paths.WORK_PATH)
-        makedirs(Paths.down_path)
+    
+    makedirs(Paths.down_path, exist_ok=True)
     Messages.link_p = str(DUMP_ID)[4:]
 
     try:
@@ -166,9 +166,9 @@ async def taskScheduler():
         Messages.download_name = ospath.basename(BOT.SOURCE[0])
 
     if is_zip:
-        Paths.down_path = ospath.join(Paths.down_path, Messages.download_name)
-        if not ospath.exists(Paths.down_path):
-            makedirs(Paths.down_path)
+        zip_path = ospath.join(Paths.BASE_DOWN_PATH, Messages.download_name)
+        makedirs(zip_path, exist_ok=True)
+        Paths.down_path = zip_path
 
     BotTimes.current_time = time()
 
