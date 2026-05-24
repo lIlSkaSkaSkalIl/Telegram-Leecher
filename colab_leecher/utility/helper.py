@@ -311,7 +311,7 @@ def multipartArchive(path: str, type: str, remove: bool):
 
 def isTimeOver():
     global BotTimes
-    ten_sec_passed = time() - BotTimes.current_time >= BotTimes.TELEGRAM_REFRESH_INTERVAL
+    ten_sec_passed = time() - BotTimes.current_time >= BotTimes.telegram_refresh_interval
     if ten_sec_passed:
         BotTimes.current_time = time()
     return ten_sec_passed
