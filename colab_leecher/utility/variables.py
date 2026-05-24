@@ -69,6 +69,7 @@ class BotTimes:
     current_time = time()
     start_time = datetime.now()
     task_start = datetime.now()
+    telegram_refresh_interval = 20
 
 
 class Paths:
