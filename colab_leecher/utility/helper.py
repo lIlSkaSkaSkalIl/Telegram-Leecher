@@ -396,11 +396,20 @@ async def send_settings(client, message, msg_id, command: bool):
     except Exception as error:
         logging.error(f"Error Modifying message | {error}")
 
+BAR_THEMES = {
+    "classic": {"filled": "█", "unfilled": "░"},
+    "geometric": {"filled": "▰", "unfilled": "▱"},
+    "circle": {"filled": "●", "unfilled": "○"},
+    "square": {"filled": "■", "unfilled": "□"},
+    "arrow": {"filled": "▶", "unfilled": "▷"},
+}
 
-async def status_bar(down_msg, speed, percentage, eta, done, left, engine):
+async def status_bar(down_msg, speed, percentage, eta, done, left, engine, theme="geometric"):
     bar_length = 12
     filled_length = int(percentage / 100 * bar_length)
-    bar = "█" * filled_length + "░" * (bar_length - filled_length)
+    selected_theme = BAR_THEMES.get(theme, BAR_THEMES["classic"])
+    # bar = "▰" * filled_length + "▱" * (bar_length - filled_length)
+    bar = (selected_theme["filled"] * filled_length + selected_theme["unfilled"] * (bar_length - filled_length))
     text = (
         f"\n╭「{bar}」 **»** __{percentage:.2f}%__\n├⚡️ **Speed »** __{speed}__\n├⚙️ **Engine »** __{engine}__"
         + f"\n├⏳ **Time Left »** __{eta}__"
